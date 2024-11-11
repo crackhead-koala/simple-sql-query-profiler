@@ -1,0 +1,5 @@
+clickhouse-driver==0.2.9
+python-dotenv==1.0.1
+pytz==2024.2
+tqdm==4.67.0
+tzlocal==5.2
