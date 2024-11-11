@@ -75,15 +75,13 @@ if __name__ == '__main__':
 
     query_execution_times: dict[str, dict[str, float]] = {}
     for query_file, query in queries.items():
-        print(f'measuring {query_file} ', end='', flush=True)
-
         spinner = itertools.cycle('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏')
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(measure_query_time, query, args)
             while future.running():
-                print(f'\x1b[34m{next(spinner)}\x1b[0m', end='', flush=True)
+                print(f'\x1b[34m{next(spinner)}\x1b[0m measuring {query_file}', end='', flush=True)
                 time.sleep(0.1)
-                print('\x1b[D', end='', flush=True)
+                print('\r', end='', flush=True)
             print('\x1b[32m✓\x1b[0m')
 
         iter_execution_times = future.result()
