@@ -14,14 +14,13 @@ Then you can run it any other Python module:
 ```sh
 $ python -m chperf --help
 
-usage: chperf.py [-h] [-t TIMES] [-H HOST] [-p PORT] [-u USERNAME] [-P PASSWORD] [-d DATABASE] [-e]
-                 queries [queries ...]
+usage: chperf.py [-h] [-t TIMES] [-H HOST] [-p PORT] [-u USERNAME] [-P PASSWORD] [-d DATABASE] [-e] queries [queries ...]
 
-A simple query performance tester for ClickHouse. Note that a new connection is established on every iteration, but
-only the query execution time is measured, not accounting for the time it takes to create a database connection.
+A simple query performance tester for ClickHouse. Note that a new connection is established on every iteration, but only the query
+execution time is measured
 
 positional arguments:
-  queries               path to the file containing a single SQL query to measure
+  queries               paths to the files, each containing a single SQL query to measure
 
 options:
   -h, --help            show this help message and exit
@@ -34,7 +33,7 @@ options:
                         password for the specified user
   -d, --database DATABASE
                         default database
-  -e, --use_env         specify whether the program should load database credentials from an .env file (it must
-                        contain the following variables: HOST, PORT, USERNAME, PASSWORD, DATABASE); note that
-                        command-line arguments are prioritized over the values provided in the .env file
+  -e, --use_env         specify whether the program should load database credentials from an .env file (it must contain the
+                        following variables: HOST, PORT, USERNAME, PASSWORD, DATABASE); note that command-line arguments are
+                        prioritized over the values provided in the .env file
 ```
