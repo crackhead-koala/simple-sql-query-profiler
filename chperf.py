@@ -34,14 +34,13 @@ if __name__ == '__main__':
         description=
             'A simple query performance tester for ClickHouse. Note that a new '
             'connection is established on every iteration, but only the query '
-            'execution time is measured, not accounting for the time it takes to create '
-            'a database connection.'
+            'execution time is measured'
     )
 
     parser.add_argument(
         'queries',
         nargs='+',
-        help='path to the file containing a single SQL query to measure'
+        help='paths to the files, each containing a single SQL query to measure'
     )
     parser.add_argument(
         '-t', '--times',
