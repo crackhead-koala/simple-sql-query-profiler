@@ -72,10 +72,13 @@ if __name__ == '__main__':
             end = time.perf_counter()
             query_execution_times.append(end - start)
 
+    time_min = min(query_execution_times)
+    time_max = max(query_execution_times)
     time_avg = statistics.mean(query_execution_times)
     time_std = statistics.stdev(query_execution_times)
 
     print(
-        f'Average execution time of {args.times} iterations: '
-        f'{time_avg:.2f}s. ± {time_std:.2f}s. (avg ± std)'
+        f'min: {time_min:.2f}, '
+        f'max: {time_max:.2f}, '
+        f'avg (±std): {time_avg:.2f}s. ±{time_std:.2f}s. ({args.times} iterations)'
     )
