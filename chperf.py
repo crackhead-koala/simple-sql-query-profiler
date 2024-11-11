@@ -2,10 +2,31 @@ import os
 import argparse
 import time
 import statistics
+import itertools
+import concurrent.futures
 
 import dotenv
-import tqdm
 import clickhouse_driver as cd
+
+
+def measure_query_time(query: str, args: argparse.Namespace) -> list[float]:
+    times: list[float] = []
+    for _ in range(args.times):
+        client = cd.Client(
+            host=args.host or os.getenv('HOST'),
+            port=args.port or int(os.getenv('PORT')),
+            database=args.database or os.getenv('DATABASE'),
+            user=args.username or os.getenv('USERNAME'),
+            password=args.password or os.getenv('PASSWORD'),
+            secure=False,
+            verify=False
+        )
+        with client:
+            start = time.perf_counter()
+            _ = client.execute(query)
+            end = time.perf_counter()
+            times.append(end - start)
+    return times
 
 
 if __name__ == '__main__':
@@ -34,11 +55,6 @@ if __name__ == '__main__':
     parser.add_argument('-P', '--password', help='password for the specified user')
     parser.add_argument('-d', '--database', help='default database')
     parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='if set, displays a progress bar for the queries'
-    )
-    parser.add_argument(
         '-e', '--use_env',
         action='store_true',
         help=
@@ -59,29 +75,18 @@ if __name__ == '__main__':
 
     query_execution_times: dict[str, dict[str, float]] = {}
     for query_file, query in queries.items():
-        _range = tqdm.trange(args.times, ncols=100) \
-            if args.verbose \
-            else range(args.times)
+        print(f'measuring {query_file} ', end='', flush=True)
 
-        print(f'measuring {query_file}')
+        spinner = itertools.cycle('⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏')
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(measure_query_time, query, args)
+            while future.running():
+                print(f'\x1b[34m{next(spinner)}\x1b[0m', end='', flush=True)
+                time.sleep(0.1)
+                print('\x1b[D', end='', flush=True)
+            print('\x1b[32m✓\x1b[0m')
 
-        iter_execution_times: list[float] = []
-        for _ in _range:
-            client = cd.Client(
-                host=args.host or os.getenv('HOST'),
-                port=args.port or int(os.getenv('PORT')),
-                database=args.database or os.getenv('DATABASE'),
-                user=args.username or os.getenv('USERNAME'),
-                password=args.password or os.getenv('PASSWORD'),
-                secure=False,
-                verify=False
-            )
-
-            with client:
-                start = time.perf_counter()
-                _ = client.execute(query)
-                end = time.perf_counter()
-                iter_execution_times.append(end - start)
+        iter_execution_times = future.result()
 
         time_min = min(iter_execution_times)
         time_max = max(iter_execution_times)
@@ -100,7 +105,7 @@ if __name__ == '__main__':
     max_file_name_len = max(map(len, query_execution_times.keys()))
     for query_file, results in query_execution_times.items():
         print(
-            f'{query_file: >{max_file_name_len}}: '
+            f' {query_file: >{max_file_name_len}}: '
             f'min: {time_min:.2f}, '
             f'max: {time_max:.2f}, '
             f'avg (±std): {time_avg:.2f}s. ±{time_std:.2f}s.'
