@@ -3,28 +3,33 @@ This is a _very_ simple CLI tool that I built for personal use, when I need to c
 
 ## Usage
 
-First install dependencies:
+First, install dependencies:
 
 ```sh
 $ pip install -r ./requrements.txt
 ```
 
-Then you can run it any other Python module:
+Then you can run it like any other Python module:
 
 ```sh
 $ python -m chperf --help
 
-usage: chperf.py [-h] [-t TIMES] [-H HOST] [-p PORT] [-u USERNAME] [-P PASSWORD] [-d DATABASE] [-e] queries [queries ...]
+usage: chperf.py [-h] [-t TIMES] [-H HOST] [-p PORT] [-u USERNAME]
+                 [-P PASSWORD] [-d DATABASE] [-e]
+                 queries [queries ...]
 
-A simple query performance tester for ClickHouse. Note that a new connection is established on every iteration, but only the query
+A simple query performance tester for ClickHouse. Note that a new
+connection is established on every iteration, but only the query
 execution time is measured
 
 positional arguments:
-  queries               paths to the files, each containing a single SQL query to measure
+  queries               paths to the files, each containing
+                        a single SQL query to measure
 
 options:
   -h, --help            show this help message and exit
-  -t, --times TIMES     how many times the query should be executed; the default is 10
+  -t, --times TIMES     how many times the query should be executed;
+                        the default is 10
   -H, --host HOST       ClickHouse database host to send queries to
   -p, --port PORT       port to use with the host
   -u, --username USERNAME
@@ -33,7 +38,10 @@ options:
                         password for the specified user
   -d, --database DATABASE
                         default database
-  -e, --use_env         specify whether the program should load database credentials from an .env file (it must contain the
-                        following variables: HOST, PORT, USERNAME, PASSWORD, DATABASE); note that command-line arguments are
-                        prioritized over the values provided in the .env file
+  -e, --use_env         specify whether the program should load
+                        database credentials from an .env file (it
+                        must contain the following variables: HOST,
+                        PORT, USERNAME, PASSWORD, DATABASE); note
+                        that command-line arguments are prioritized
+                        over the values provided in the .env file
 ```
